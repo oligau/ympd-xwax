@@ -166,6 +166,15 @@ int callback_mpd(struct mg_connection *c)
                 fprintf(stderr, "XWAX_CLIENT_LOAD_TRACK malformed. OOPS.\n");
             }
             break;
+/*
+ * TODO: how to read the rootpath of mpd's music library?
+ * http://www.musicpd.org/doc/protocol/ch03s10.html
+ * 
+        case XWAX_CLIENT_GET_ROOTPATH:
+            run_mpd_get_rootpath(mpd.conn);
+            
+            break;
+*/
 #ifdef WITH_MPD_HOST_CHANGE
         /* Commands allowed when disconnected from MPD server */
         case MPD_API_SET_MPDHOST:
@@ -358,6 +367,19 @@ char* mpd_get_year(struct mpd_song const *song)
     return str;
 }
 
+
+/*
+ * TODO: how to read the rootpath of mpd's music library?
+ * http://www.musicpd.org/doc/protocol/ch03s10.html
+ * 
+int run_mpd_get_rootpath(char *buffer)
+{
+    const struct mpd_settings *settings;
+    settings = mpd_connection_get_settings(mpd.conn);
+    fprintf(stderr, "MPD settings: %s\n", settings);
+    return 0;
+}
+*/
 int mpd_put_state(char *buffer, int *current_song_id, unsigned *queue_version)
 {
     struct mpd_status *status;
@@ -515,6 +537,10 @@ int mpd_put_browse(char *buffer, char *path, unsigned int offset)
                 cur += json_emit_int(cur, end - cur, mpd_song_get_duration(song));
                 cur += json_emit_raw_str(cur, end - cur, ",\"title\":");
                 cur += json_emit_quoted_str(cur, end - cur, mpd_get_title(song));
+                cur += json_emit_raw_str(cur, end - cur, ",\"artist\":");
+                cur += json_emit_quoted_str(cur, end - cur, mpd_get_artist(song));
+                cur += json_emit_raw_str(cur, end - cur, ",\"year\":");
+                cur += json_emit_quoted_str(cur, end - cur, mpd_get_year(song));
                 cur += json_emit_raw_str(cur, end - cur, "},");
                 break;
 
@@ -573,6 +599,10 @@ int mpd_search(char *buffer, char *searchstr)
             cur += json_emit_int(cur, end - cur, mpd_song_get_duration(song));
             cur += json_emit_raw_str(cur, end - cur, ",\"title\":");
             cur += json_emit_quoted_str(cur, end - cur, mpd_get_title(song));
+            cur += json_emit_raw_str(cur, end - cur, ",\"artist\":");
+            cur += json_emit_quoted_str(cur, end - cur, mpd_get_artist(song));
+            cur += json_emit_raw_str(cur, end - cur, ",\"year\":");
+            cur += json_emit_quoted_str(cur, end - cur, mpd_get_year(song));
             cur += json_emit_raw_str(cur, end - cur, "},");
             mpd_song_free(song);
 

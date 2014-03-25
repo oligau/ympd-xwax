@@ -114,8 +114,15 @@ $(document).ready(function(){
 });
 
 function showDeckselector(song_obj) {
-    $('#deckselector-uri').val(song_obj.uri)
-    $('#deckselector .modal-title').text( song_obj.artist + ' - ' + song_obj.title );
+    $('#deckselector-uri').val(song_obj.uri);
+    $('#xwax-debug').text(song_obj.uri);
+
+	/* TODO: how to read the rootpath of mpd's music library?
+	 * http://www.musicpd.org/doc/protocol/ch03s10.html
+	 * //socket.send('XWAX_CLIENT_GET_ROOTPATH');
+	 */ 
+
+    $('#deckselector .modal-title').text( compileTrackString(song_obj) );
 }
 
 function xwaxClientLoadTrack(deck_index) {
@@ -123,6 +130,20 @@ function xwaxClientLoadTrack(deck_index) {
     $('#deckselector').modal('hide');
 }
 
+function compileTrackString(song_obj) {
+	//console.log(song_obj);
+	var trackstring = song_obj.artist + ' - ' + song_obj.title + ' [' + song_obj.year + ']';
+	if(trackstring != ' -  []') {
+		return trackstring;
+	}
+	return baseName(song_obj.uri);
+}
+function baseName(str) {
+   var base = new String(str).substring(str.lastIndexOf('/') + 1); 
+    if(base.lastIndexOf(".") != -1)       
+       base = base.substring(0, base.lastIndexOf("."));
+   return base;
+}
 function webSocketConnect() {
     if (typeof MozWebSocket != "undefined") {
         socket = new MozWebSocket(get_appropriate_ws_url());
@@ -146,7 +167,7 @@ function webSocketConnect() {
                 return;
 
             var obj = JSON.parse(msg.data);
-
+            
             switch (obj.type) {
                 case "queue":
                     if(current_app !== 'queue')
@@ -158,10 +179,11 @@ function webSocketConnect() {
                         var seconds = obj.data[song].duration - minutes * 60;
 
                         $('#salamisandwich > tbody').append(
-                            "<tr trackid=\"" + obj.data[song].id + "\" data-song='"+JSON.stringify(obj.data[song])+"'><td>" + (obj.data[song].pos + 1) + "</td>" +
-                                "<td>"+ obj.data[song].title +"</td>" + 
+                            "<tr trackid=\"" + obj.data[song].id + "\"><td>" + (obj.data[song].pos + 1) + "</td>" +
+                                "<td>" + compileTrackString(obj.data[song]) +"</td>" + 
                                 "<td>"+ minutes + ":" + (seconds < 10 ? '0' : '') + seconds +
                         "</td><td></td></tr>");
+                        $('[trackid="'+obj.data[song].id+'"]').data('song', obj.data[song]);
                     }
 
                     if(obj.data[obj.data.length-1].pos + 1 >= pagination + MAX_ELEMENTS_PER_PAGE)
@@ -184,7 +206,7 @@ function webSocketConnect() {
                             $(this).addClass('active');
                         },
 			contextmenu: function(e) {
-			    var song_obj = JSON.parse($(this).attr('data-song'));
+			    var song_obj = $(this).data('song');
 			    showDeckselector(song_obj);
 			    $('#deckselector').modal('show');
 			    e.preventDefault();
@@ -227,19 +249,18 @@ function webSocketConnect() {
                                 $('#salamisandwich > tbody').append(
                                     "<tr uri=\"" + obj.data[item].uri + "\" class=\"song\">" +
                                     "<td><span class=\"glyphicon glyphicon-music\"></span></td>" + 
-                                    "<td>" + obj.data[item].title +"</td>" + 
+                                    "<td>" + compileTrackString(obj.data[item]) +"</td>" + 
                                     "<td>"+ minutes + ":" + (seconds < 10 ? '0' : '') + seconds +
                                     "</td><td></td></tr>"
                                 );
+                                $('[uri="'+obj.data[item].uri+'"]').data('song', obj.data[item]);
                                 
                                 $('#salamisandwich > tbody > tr').on({
                                     contextmenu: function(e) {
-                                        if(obj.data[item].type == "song") {
-                                            var song_obj = obj.data[item];
-                                            showDeckselector(song_obj);
-                                            $('#deckselector').modal('show');
-                                            e.preventDefault();
-                                        }
+                                        var song_obj = $(this).data('song');
+                                        showDeckselector(song_obj);
+                                        $('#deckselector').modal('show');
+                                        e.preventDefault();
                                     },
                                     mouseleave: function(){
                                         $(this).children().last().find("a").stop().remove();
