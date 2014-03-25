@@ -1,1 +1,0 @@
-/usr/bin/gcc  -std=gnu99 -Wall    CMakeFiles/mkdata.dir/htdocs/mkdata.c.o  -o mkdata -rdynamic 

@@ -1,2 +1,0 @@
-/home/oligau/documents/devel/ympd/src/CMakeFiles/mkdata.dir
-/home/oligau/documents/devel/ympd/src/CMakeFiles/ympd.dir
