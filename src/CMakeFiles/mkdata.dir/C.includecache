@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/oligau/documents/devel/ympd/htdocs/mkdata.c
+stdlib.h
+-
+stdio.h
+-
+error.h
+-
+errno.h
+-
+string.h
+-
+

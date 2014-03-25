@@ -113,6 +113,15 @@ $(document).ready(function(){
             $('#btnnotify').addClass("active")
 });
 
+function showDeckselector(song_obj) {
+    $('#deckselector-uri').val(song_obj.uri)
+    $('#deckselector .modal-title').text( song_obj.artist + ' - ' + song_obj.title );
+}
+
+function xwaxClientLoadTrack(deck_index) {
+    socket.send('XWAX_CLIENT_LOAD_TRACK,'+deck_index+','+$('#deckselector-uri').val());
+    $('#deckselector').modal('hide');
+}
 
 function webSocketConnect() {
     if (typeof MozWebSocket != "undefined") {
@@ -149,7 +158,7 @@ function webSocketConnect() {
                         var seconds = obj.data[song].duration - minutes * 60;
 
                         $('#salamisandwich > tbody').append(
-                            "<tr trackid=\"" + obj.data[song].id + "\"><td>" + (obj.data[song].pos + 1) + "</td>" +
+                            "<tr trackid=\"" + obj.data[song].id + "\" data-song='"+JSON.stringify(obj.data[song])+"'><td>" + (obj.data[song].pos + 1) + "</td>" +
                                 "<td>"+ obj.data[song].title +"</td>" + 
                                 "<td>"+ minutes + ":" + (seconds < 10 ? '0' : '') + seconds +
                         "</td><td></td></tr>");
@@ -174,6 +183,12 @@ function webSocketConnect() {
                             socket.send('MPD_API_PLAY_TRACK,'+$(this).attr('trackid'));
                             $(this).addClass('active');
                         },
+			contextmenu: function(e) {
+			    var song_obj = JSON.parse($(this).attr('data-song'));
+			    showDeckselector(song_obj);
+			    $('#deckselector').modal('show');
+			    e.preventDefault();
+                        },
                         mouseleave: function(){
                             $(this).children().last().find("a").stop().remove();
                         }
@@ -184,6 +199,8 @@ function webSocketConnect() {
                 case "browse":
                     if(current_app !== 'browse' && current_app !== 'search')
                         break;
+                        
+                    
 
                     for (var item in obj.data) {
                         switch(obj.data[item].type) {
@@ -214,6 +231,20 @@ function webSocketConnect() {
                                     "<td>"+ minutes + ":" + (seconds < 10 ? '0' : '') + seconds +
                                     "</td><td></td></tr>"
                                 );
+                                
+                                $('#salamisandwich > tbody > tr').on({
+                                    contextmenu: function(e) {
+                                        if(obj.data[item].type == "song") {
+                                            var song_obj = obj.data[item];
+                                            showDeckselector(song_obj);
+                                            $('#deckselector').modal('show');
+                                            e.preventDefault();
+                                        }
+                                    },
+                                    mouseleave: function(){
+                                        $(this).children().last().find("a").stop().remove();
+                                    }
+                                }); 
                                 break;
                             case "wrap":
                                 if(current_app == 'browse') {

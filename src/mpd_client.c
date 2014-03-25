@@ -27,6 +27,8 @@
 #include "config.h"
 #include "json_encode.h"
 
+#define MUSIC_DIRECTORY "/media/vault/musique"
+
 const char * mpd_cmd_strs[] = {
     MPD_CMDS(GEN_STR)
 };
@@ -149,6 +151,19 @@ int callback_mpd(struct mg_connection *c)
             {
                 n = mpd_search(mpd.buf, p_charbuf);
                 free(p_charbuf);
+            }
+            break;
+        case XWAX_CLIENT_LOAD_TRACK:
+            if(sscanf(c->content, "XWAX_CLIENT_LOAD_TRACK,%u,%m[^\t\n]", &uint_buf, &p_charbuf) && p_charbuf != NULL)
+            {
+                char command[4096];
+                fprintf(stderr, "load to deck:%i track:%s\n", uint_buf, p_charbuf);
+                sprintf(&command, "xwax-client 127.0.0.1 load_track %i \"%s/%s\" \"%s\" \"%s\"", uint_buf, MUSIC_DIRECTORY, p_charbuf, "artist", "title");
+                fprintf(stderr, "%s\n", &command);
+                system(&command);
+                free(p_charbuf);
+            } else {
+                fprintf(stderr, "XWAX_CLIENT_LOAD_TRACK malformed. OOPS.\n");
             }
             break;
 #ifdef WITH_MPD_HOST_CHANGE
@@ -319,6 +334,30 @@ char* mpd_get_title(struct mpd_song const *song)
     return str;
 }
 
+char* mpd_get_artist(struct mpd_song const *song)
+{
+    char *str;
+
+    str = (char *)mpd_song_get_tag(song, MPD_TAG_ARTIST, 0);
+    if(str == NULL){
+        str = basename((char *)mpd_song_get_uri(song));
+    }
+
+    return str;
+}
+
+char* mpd_get_year(struct mpd_song const *song)
+{
+    char *str;
+
+    str = (char *)mpd_song_get_tag(song, MPD_TAG_DATE, 0);
+    if(str == NULL){
+        str = basename((char *)mpd_song_get_uri(song));
+    }
+
+    return str;
+}
+
 int mpd_put_state(char *buffer, int *current_song_id, unsigned *queue_version)
 {
     struct mpd_status *status;
@@ -414,6 +453,12 @@ int mpd_put_queue(char *buffer, unsigned int offset)
             cur += json_emit_int(cur, end - cur, mpd_song_get_duration(song));
             cur += json_emit_raw_str(cur, end - cur, ",\"title\":");
             cur += json_emit_quoted_str(cur, end - cur, mpd_get_title(song));
+            cur += json_emit_raw_str(cur, end - cur, ",\"artist\":");
+            cur += json_emit_quoted_str(cur, end - cur, mpd_get_artist(song));
+            cur += json_emit_raw_str(cur, end - cur, ",\"year\":");
+            cur += json_emit_quoted_str(cur, end - cur, mpd_get_year(song));
+            cur += json_emit_raw_str(cur, end - cur, ",\"uri\":");
+            cur += json_emit_quoted_str(cur, end - cur, mpd_song_get_uri(song));
             cur += json_emit_raw_str(cur, end - cur, "},");
         }
         mpd_entity_free(entity);
