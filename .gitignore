@@ -1,0 +1,8 @@
+src/CMakeFiles/*
+src/assets.c
+src/Makefile
+src/cmake_install.cmake
+src/config.h
+src/mkdata
+src/ympd
+
