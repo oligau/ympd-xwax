@@ -5,4 +5,5 @@ src/cmake_install.cmake
 src/config.h
 src/mkdata
 src/ympd
+src/CMakeCache.txt
 
