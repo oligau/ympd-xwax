@@ -1,5 +1,6 @@
 xwax remote control branch of ympd mpd client.
 Needs a ![patched version of xwax](https://github.com/oligau/xwax-1.5-osc) that enables to receive commands by command line using xwax-client and OSC messages.
+Make sure xwax-client is installed in your path. Configure your mpd server to index your collection. Launch ./ympd. Point your browser to http://127.0.0.1:8080. Simply right click on a track, a modal window will pop-up. Choose which deck you'd like to load track.
 
 ====
 
