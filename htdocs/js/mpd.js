@@ -114,7 +114,7 @@ $(document).ready(function(){
 });
 
 function showDeckselector(song_obj) {
-    $('#deckselector-uri').val(song_obj.uri);
+	$('#deckselector').data('song', song_obj);
     $('#xwax-debug').text(song_obj.uri);
 
 	/* TODO: how to read the rootpath of mpd's music library?
@@ -125,9 +125,16 @@ function showDeckselector(song_obj) {
     $('#deckselector .modal-title').text( compileTrackString(song_obj) );
 }
 
+
 function xwaxClientLoadTrack(deck_index) {
-    socket.send('XWAX_CLIENT_LOAD_TRACK,'+deck_index+','+$('#deckselector-uri').val());
-    $('#deckselector').modal('hide');
+	var song_obj = $('#deckselector').data('song');
+	var cmd = 'XWAX_CLIENT_LOAD_TRACK,' + deck_index
+		+ ',' + song_obj.uri
+		+ "\n" + song_obj.artist 
+		+ "\n" + song_obj.title;
+
+	socket.send(cmd);
+	$('#deckselector').modal('hide');
 }
 
 function compileTrackString(song_obj) {

@@ -49,6 +49,7 @@ int callback_mpd(struct mg_connection *c)
     unsigned int uint_buf, uint_buf_2;
     int int_buf;
     char *p_charbuf = NULL;
+    char *p_charbuf_2, *p_charbuf_3;
 
     if(cmd_id == -1)
         return MG_CLIENT_CONTINUE;
@@ -155,14 +156,16 @@ int callback_mpd(struct mg_connection *c)
             }
             break;
         case XWAX_CLIENT_LOAD_TRACK:
-            if(sscanf(c->content, "XWAX_CLIENT_LOAD_TRACK,%u,%m[^\t\n]", &uint_buf, &p_charbuf) && p_charbuf != NULL)
+            if(sscanf(c->content, "XWAX_CLIENT_LOAD_TRACK,%u,%m[^\n]\n%m[^\n]\n%m[^\t\n]", &uint_buf, &p_charbuf, &p_charbuf_2, &p_charbuf_3) && p_charbuf != NULL)
             {
                 char command[4096];
-                fprintf(stderr, "load to deck:%i track:%s\n", uint_buf, p_charbuf);
-                sprintf(&command, "xwax-client 127.0.0.1 load_track %i \"%s/%s\" \"%s\" \"%s\"", uint_buf, MUSIC_DIRECTORY, p_charbuf, "artist", "title");
+                fprintf(stderr, "load to deck:%i track:%s a:%s t:%s\n", uint_buf, p_charbuf, p_charbuf_2, p_charbuf_3);
+                sprintf(&command, "xwax-client 127.0.0.1 load_track %i \"%s/%s\" \"%s\" \"%s\"", uint_buf, MUSIC_DIRECTORY, p_charbuf, p_charbuf_2, p_charbuf_3);
                 fprintf(stderr, "%s\n", &command);
                 system(&command);
                 free(p_charbuf);
+                free(p_charbuf_2);
+                free(p_charbuf_3);
             } else {
                 fprintf(stderr, "XWAX_CLIENT_LOAD_TRACK malformed. OOPS.\n");
             }
