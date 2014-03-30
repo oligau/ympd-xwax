@@ -565,11 +565,8 @@ $('#btnnotify').on('click', function (e) {
 });
 
 $('#btntheme').on('click', function (e) {
-	$('#darktheme').text(
-		(($(this).hasClass('active') == true)
-			? ''
-			: $('#darktheme').attr('data-content')
-		)
+	$('#themeswitch').text(
+		$('#themeswitch').attr('data-'+ (($(this).hasClass('active') == true) ? 'default' : 'dark') +'theme')
 	);
 });
 
