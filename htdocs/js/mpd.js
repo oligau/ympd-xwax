@@ -564,6 +564,15 @@ $('#btnnotify').on('click', function (e) {
     }
 });
 
+$('#btntheme').on('click', function (e) {
+	$('#darktheme').text(
+		(($(this).hasClass('active') == true)
+			? ''
+			: $('#darktheme').attr('data-content')
+		)
+	);
+});
+
 function getHost() {
     socket.send('MPD_API_GET_MPDHOST');
 

@@ -1,0 +1,63 @@
+body {
+	color: #C8C8C8;
+	background-color: #272B30;
+}
+
+.table > thead > tr > th {
+  border-bottom: 2px solid #1C1E22;
+  vertical-align: bottom;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+  border-top: 1px solid #1C1E22;
+}
+
+table {
+  background-color: #2E3338;
+  max-width: 100%;
+}
+
+.panel > .table:last-child, .panel > .table-responsive:last-child > .table:last-child {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.panel-primary > .panel-heading {
+  background-image: linear-gradient(to bottom, #428BCA 0px, #357EBD 100%);
+  background-repeat: repeat-x;
+}
+
+
+
+.panel-primary .panel-heading, .panel-success .panel-heading, .panel-danger .panel-heading, .panel-warning .panel-heading, .panel-info .panel-heading {
+  border-color: #000000;
+}
+
+.panel {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.panel-primary {
+  border-color: rgba(0, 0, 0, 0.6);
+}
+
+.panel {
+  background-color: #2E3338;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 4px 4px 4px 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+  background-color: #49515A;
+}
+
+.table > thead > tr > td.active, .table > tbody > tr > td.active, .table > tfoot > tr > td.active, .table > thead > tr > th.active, .table > tbody > tr > th.active, .table > tfoot > tr > th.active, .table > thead > tr.active > td, .table > tbody > tr.active > td, .table > tfoot > tr.active > td, .table > thead > tr.active > th, .table > tbody > tr.active > th, .table > tfoot > tr.active > th {
+  background-color: #49515A;
+}
+
+.table-hover > tbody > tr > td.active:hover, .table-hover > tbody > tr > th.active:hover, .table-hover > tbody > tr.active:hover > td, .table-hover > tbody > tr.active:hover > th {
+  background-color: #3E444C;
+}
+
