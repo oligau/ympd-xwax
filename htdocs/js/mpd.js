@@ -145,12 +145,23 @@ function compileTrackString(song_obj) {
 	}
 	return baseName(song_obj.uri);
 }
+
 function baseName(str) {
    var base = new String(str).substring(str.lastIndexOf('/') + 1); 
     if(base.lastIndexOf(".") != -1)       
        base = base.substring(0, base.lastIndexOf("."));
    return base;
 }
+
+function dirName(str) {
+    return str.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');;
+}
+
+function triggerDirbrowser() {
+	app.setLocation('#/browse/0/'+dirName($('#deckselector').data('song').uri));
+	$('#deckselector').modal('hide');
+}
+
 function webSocketConnect() {
     if (typeof MozWebSocket != "undefined") {
         socket = new MozWebSocket(get_appropriate_ws_url());
