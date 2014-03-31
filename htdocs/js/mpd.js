@@ -115,7 +115,12 @@ $(document).ready(function(){
 
 function showDeckselector(song_obj) {
 	$('#deckselector').data('song', song_obj);
-    $('#xwax-debug').text(song_obj.uri);
+    $('#xwax-debug').text(
+    	"A: " + song_obj.artist +
+    	"\nT: " + song_obj.title +
+    	"\nY: " + song_obj.year +
+    	"\nU: " + song_obj.uri 
+    	);
 
 	/* TODO: how to read the rootpath of mpd's music library?
 	 * http://www.musicpd.org/doc/protocol/ch03s10.html
@@ -138,19 +143,18 @@ function xwaxClientLoadTrack(deck_index) {
 }
 
 function compileTrackString(song_obj) {
-	//console.log(song_obj);
-	var trackstring = song_obj.artist + ' - ' + song_obj.title + ' [' + song_obj.year + ']';
-	if(trackstring != ' -  []') {
-		return trackstring;
+	var basename = baseName(song_obj.uri);
+	switch(true) {
+		case (song_obj.artist == basename && song_obj.title == basename && song_obj.year == basename):
+			return basename;
+		case (song_obj.year == basename):
+			return song_obj.artist + ' - ' + song_obj.title;
 	}
-	return baseName(song_obj.uri);
+	return song_obj.artist + ' - ' + song_obj.title + ' [' + song_obj.year + ']';
 }
 
-function baseName(str) {
-   var base = new String(str).substring(str.lastIndexOf('/') + 1); 
-    if(base.lastIndexOf(".") != -1)       
-       base = base.substring(0, base.lastIndexOf("."));
-   return base;
+function baseName(path) {
+    return path.replace(/\\/g,'/').replace( /.*\//, '' );
 }
 
 function dirName(str) {
